@@ -1,11 +1,17 @@
-const router = require('express').Router();
+const express = require('express');
+const routes = require('./routes');
+const sequelize = require('./config/connection');
 
-const apiRoutes = require('./api');
+const app = express();
+const PORT = process.env.PORT || 3001;
 
-router.use('/api', apiRoutes);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-router.use((req, res) => {
-  res.status(404).end();
+// turn on routes
+app.use(routes);
+
+// turn on connection to db and server
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log('Now listening'));
 });
-
-module.exports = router;
